@@ -1,0 +1,50 @@
+import RPi.GPIO as GPIO
+import time
+GPIO.setmode(GPIO.BCM)
+
+E2C_PIN1 = 3
+E2C_PIN2 = 2
+GPIO.setup(E2C_PIN1,GPIO.OUT)
+GPIO.setup(E2C_PIN2,GPIO.IN)
+
+try:
+    while True:
+        GPIO.output(E2C_PIN1, False)
+        print("DISTANCE MEASURMENT IN PROGRESS")
+        
+        time.sleep(1)
+        GPIO.output(E2C_PIN1, True)
+        time.sleep(0.001)
+        
+       GPIO.output(E2C_PIN1, False)
+        while GPIO.input(E2C_PIN2) ==0:
+            pulse_start = time.time()
+            
+        while GPIO.input(E2C_PIN2) ==1:
+            pulse_end = time.time()
+            
+        pulse_duration = pulse_end - pulse_start
+        
+        distance = pulse_duration * 11150
+        
+        distance = round(distance, 2)
+        
+        print("Distance: ",distance," in cm")
+        if(distance >0 and distance <= 20):
+            print("TOO CLOSE")
+            
+        elif(distance > 20 and distance <= 30):
+            print("CLOSE")
+        
+        elif(distance >30 and distance <= 40):
+            print("MIDDLE PERFECT")
+        
+        elif(distance > 40 and distance <= 50):
+            print ("AWAY")
+        
+        elif(distance > 50):
+            print("TOO AWAY")
+
+except KeyboardInterrupt:
+    print("Cleaning up!")
+    gpio.cleanup()
